@@ -1,4 +1,4 @@
-import { createSignal, type Component } from "solid-js";
+import { createSignal, type Component, Show } from "solid-js";
 import { BookList } from "./BookList";
 import { AddBook } from "./AddBook";
 
@@ -19,12 +19,21 @@ const initialBooks: Array<BookT> = [
 
 function Bookshelf(props: BookshelfI) {
   const [books, setBooks] = createSignal(initialBooks);
+  const [showForm, setShowForm] = createSignal(false);
+
+  const toggleForm = () => setShowForm(!showForm());
 
   return (
     <>
       <h1>{props.name} Bookshelf</h1>
       <BookList books={books()} />
-      <AddBook setBooks={setBooks} />
+      <Show
+        when={showForm()}
+        fallback={<button onClick={toggleForm}>Add a book</button>}
+      >
+        <AddBook setBooks={setBooks} />
+        <button onClick={toggleForm}>Finishing adding books</button>
+      </Show>
     </>
   );
 }
