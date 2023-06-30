@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { createSignal, type Component } from "solid-js";
 import { BookList } from "./BookList";
 import { AddBook } from "./AddBook";
 
@@ -6,31 +6,28 @@ interface BookshelfI {
   name: string;
 }
 
+export type BookT = {
+  title: string;
+  author: string;
+};
+
+const initialBooks: Array<BookT> = [
+  { title: "Code Complete", author: "Steve McConnell" },
+  { title: "The Hobbit", author: "J.R.R. Tolkien" },
+  { title: "Living a Feminist Life", author: "Sarah Ahmed" },
+];
+
 function Bookshelf(props: BookshelfI) {
+  const [books, setBooks] = createSignal(initialBooks);
+
   return (
     <>
       <h1>{props.name} Bookshelf</h1>
-      <BookList />
-      <AddBook />
+      <BookList books={books()} />
+      <AddBook setBooks={setBooks} />
     </>
   );
 }
-
-/* 
-In React, it's common to use destructuring assignment when accessing props inside a component. For example, our Bookshelf component may be written like this in React:
-
-function Bookshelf({ name }) {
-  return (
-    <div>
-      <h1>{name}'s Bookshelf</h1>
-      <Books />
-      <AddBook />
-    </div>
-  );
-}
-
-But destructuring props is usually a bad idea in Solid. Under the hood, Solid uses proxies to hook into props objects to know when a prop is accessed. When we destructure our props object in the function signature, we immediately access the object's properties and lose reactivity.
-*/
 
 const App: Component = () => {
   return <Bookshelf name="solid" />;
