@@ -1,34 +1,45 @@
-## Usage
+https://docs.solidjs.com/guides/tutorials/getting-started-with-solid/adding-interactivity-with-state
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+Notes:
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+1. Derived state
+   Solid makes it easy to track derived state. You can think of derived state as a computation based only on other information you're already tracking in state. In our Bookshelf application, an example of derived state would be the number of books on our list: it's the length of our books array at any point in time.
+   In Solid, all we have to do to compute derived state is to create a derived signal: a function that relies on another signal:
 
-```bash
-$ npm install # or pnpm install or yarn install
+```js
+const totalBooks = () => books().length;
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+Now, whenever we call totalBooks(), Solid will register the underlying signal (books) as a dependency, so the computed value will always stay up-to-date.
 
-## Available Scripts
+2. Since you're coming from React
+   In React, we'd use array.map:
 
-In the project directory, you can run:
+```js
+{
+  books.map((book) => (
+    <li key={book.title}>
+      {book.title} ({book.author}
+    </li>
+  ));
+}
+```
 
-### `npm run dev` or `npm start`
+If we used array.map here in Solid, every element inside the book would have to rerender whenever the books signal changes. The For component checks the array when it changes, and only updates the necessary element. It's the same kind of checking that React's VDOM rendering system does for us when we use .map.
+Note that, unlike in React, we don't need to provide a key to the For component: it compares each element by reference.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. In React, it's common to use destructuring assignment when accessing props inside a component. For example, our Bookshelf component may be written like this in React:
 
-The page will reload if you make edits.<br>
+```js
+function Bookshelf({ name }) {
+  return (
+    <div>
+      <h1>{name}'s Bookshelf</h1>
+      <Books />
+      <AddBook />
+    </div>
+  );
+}
+```
 
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+But destructuring props is usually a bad idea in Solid. Under the hood, Solid uses proxies to hook into props objects to know when a prop is accessed. When we destructure our props object in the function signature, we immediately access the object's properties and lose reactivity.
