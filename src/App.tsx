@@ -6,12 +6,12 @@ interface BookshelfI {
   name: string;
 }
 
-export type BookT = {
+export type Book = {
   title: string;
   author: string;
 };
 
-const initialBooks: Array<BookT> = [
+const initialBooks: Array<Book> = [
   { title: "Code Complete", author: "Steve McConnell" },
   { title: "The Hobbit", author: "J.R.R. Tolkien" },
   { title: "Living a Feminist Life", author: "Sarah Ahmed" },

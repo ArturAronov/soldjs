@@ -96,3 +96,15 @@ Notes:
      );
    }
    ```
+
+5. Fetching Data
+
+   ```js
+   const [data] = createResource(signal, dataFetchingFunction);
+   ```
+
+   The signal triggers the dataFetchingFunction: whenever it becomes a value other than `null`, `undefined`, or `false`, the `dataFetchingFunction` will be called, with that value as the first argument.
+
+   When our `dataFetchingFunction` completes, it will update the value of `data()`, which we can access like a normal signal. Additionally, `data.loading` and `data.error` properties will be available to us so we can react to the state of the data fetching.
+
+   Later, if the value of `signal` changes again, `dataFetchingFunction` will rerun again (as long as that value isn't `null`, `undefined`, or `false`).
